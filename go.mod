@@ -1,4 +1,4 @@
-module go-nat
+module github.com/thesmallboat/go-nat
 
 go 1.14
 
