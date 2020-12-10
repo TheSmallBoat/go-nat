@@ -7,4 +7,5 @@ require (
 	github.com/jackpal/gateway v1.0.6
 	github.com/jackpal/go-nat-pmp v1.0.2
 	github.com/koron/go-ssdp v0.0.2
+	github.com/libp2p/go-netroute v0.1.4
 )

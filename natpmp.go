@@ -15,9 +15,14 @@ var (
 func discoverNATPMP() <-chan NAT {
 	res := make(chan NAT, 1)
 
-	ip, err := gateway.DiscoverGateway()
-	if err == nil {
-		go discoverNATPMPWithAddr(res, ip)
+	ip0, err0 := gateway.DiscoverGateway()
+	if err0 == nil {
+		go discoverNATPMPWithAddr(res, ip0)
+	} else {
+		ip1, err1 := getDefaultGateway()
+		if err1 == nil {
+			go discoverNATPMPWithAddr(res, ip1)
+		}
 	}
 
 	return res
