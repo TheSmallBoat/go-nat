@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/fd/go-nat"
+	"github.com/thesmallboat/go-nat"
 )
 
 func main() {
