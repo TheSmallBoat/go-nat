@@ -10,60 +10,58 @@ import (
 )
 
 func main() {
-	n, err := nat.DiscoverGateway()
-	if err != nil {
-		ip, err := nat.GetOutboundIP()
-		if err != nil {
-			log.Printf("%v", err)
+	n, errA := nat.DiscoverGateway()
+	if errA != nil {
+		ip, errB := nat.GetOutboundIP()
+		if errB != nil {
+			log.Printf("error B: %v", errB)
 		} else {
 			log.Printf("getting outbound IP: %v", ip)
 		}
 
-		log.Fatalf("error: %s", err)
-	}
-	log.Printf("nat type: %s", n.Type())
-
-	daddr, err := n.GetDeviceAddress()
-	if err != nil {
-		log.Fatalf("error: %s", err)
-	}
-	log.Printf("device address: %s", daddr)
-
-	iaddr, err := n.GetInternalAddress()
-	if err != nil {
-		log.Fatalf("error: %s", err)
-	}
-	log.Printf("internal address: %s", iaddr)
-
-	eaddr, err := n.GetExternalAddress()
-	if err != nil {
-		log.Fatalf("error: %s", err)
-	}
-	log.Printf("external address: %s", eaddr)
-
-	eport, err := n.AddPortMapping("tcp", 8888, "http", 60)
-	if err != nil {
-		// Some hardware does not support mappings with timeout, so try that
-		eport, err = n.AddPortMapping("tcp", 8888, "http", 0)
-		if err != nil {
-			log.Fatalf("error: %s", err)
-		}
+		log.Fatalf("error A: %v", errA)
 	}
 
+	log.Printf("nat type: %v", n.Type())
+
+	daddr, errC := n.GetDeviceAddress()
+	if errC != nil {
+		log.Fatalf("error C: %v", errC)
+	}
+	log.Printf("device address: %v", daddr)
+
+	iaddr, errD := n.GetInternalAddress()
+	if errD != nil {
+		log.Fatalf("error D: %v", errD)
+	}
+	log.Printf("internal address: %v", iaddr)
+
+	eaddr, errE := n.GetExternalAddress()
+	if errE != nil {
+		log.Fatalf("error E: %v", errE)
+	}
+	log.Printf("external address: %v", eaddr)
+
+	eport, errF := n.AddPortMapping("tcp", 8888, "http", 60)
+	if errF != nil {
+		log.Fatalf("error F: %v", errF)
+	}
+
+	log.Printf("external port: %v", eport)
 	log.Printf("test-page: http://%s:%d/", eaddr, eport)
 
 	go func() {
+		defer n.DeletePortMapping("tcp", 8888)
+
 		for {
 			time.Sleep(30 * time.Second)
 
-			_, err = n.AddPortMapping("tcp", 8888, "http", 60)
-			if err != nil {
-				log.Fatalf("error: %s", err)
+			_, errG := n.AddPortMapping("tcp", 8888, "http", 60)
+			if errG != nil {
+				log.Fatalf("error G: %v", errG)
 			}
 		}
 	}()
-
-	defer n.DeletePortMapping("tcp", 8888)
 
 	http.ListenAndServe(":8888", http.HandlerFunc(func(rw http.ResponseWriter, req *http.Request) {
 		rw.Header().Set("Content-Type", "text/plain")
